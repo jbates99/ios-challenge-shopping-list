@@ -17,18 +17,20 @@ class ListTableViewController: UITableViewController, ListTableViewCellDelegate 
         alertController.addAction(UIAlertAction(title: "Add", style: .Default, handler: { (addItem) in
             if let name = alertController.textFields?[0].text {
             ItemController.sharedController.addItem(name)
+            self.tableView.reloadData()
             }
         }))
         
         alertController.addTextFieldWithConfigurationHandler({ (textField) in
             textField.placeholder = "Enter Item Name"
         })
+        
         self.presentViewController(alertController, animated: true, completion: nil)
-        tableView.reloadData()
     }
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        tableView.reloadData()
 
         // Uncomment the following line to preserve selection between presentations
         // self.clearsSelectionOnViewWillAppear = false
