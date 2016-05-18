@@ -8,8 +8,25 @@
 
 import UIKit
 
-class ListTableViewController: UITableViewController {
+class ListTableViewController: UITableViewController, ListTableViewCellDelegate {
+    
 
+    @IBAction func addButtonTapped(sender: AnyObject) {
+        let alertController = UIAlertController(title: "Add Item", message: "Please add an item to your shopping list", preferredStyle: .Alert)
+        alertController.addAction(UIAlertAction(title: "Cancel", style: .Cancel, handler: nil))
+        alertController.addAction(UIAlertAction(title: "Add", style: .Default, handler: { (addItem) in
+            if let name = alertController.textFields?[0].text {
+            ItemController.sharedController.addItem(name)
+            }
+        }))
+        
+        alertController.addTextFieldWithConfigurationHandler({ (textField) in
+            textField.placeholder = "Enter Item Name"
+        })
+        self.presentViewController(alertController, animated: true, completion: nil)
+        tableView.reloadData()
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -19,77 +36,57 @@ class ListTableViewController: UITableViewController {
         // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
         // self.navigationItem.rightBarButtonItem = self.editButtonItem()
     }
-
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
+    
+    override func viewWillAppear(animated: Bool) {
+        super.viewWillAppear(true)
+        tableView.reloadData()
+    }
+    
+    func ListCellButtonTapped(sender: ListTableViewCell) {
+        
+        if let index = tableView.indexPathForCell(sender) {
+            let item = ItemController.sharedController.items[index.row]
+            if item.isComplete == true {
+                item.isComplete = false
+            } else {
+                item.isComplete = true
+            }
+            ItemController.sharedController.saveToPersistentStorage()
+        }
+        tableView.reloadData()
     }
 
-    // MARK: - Table view data source
-
     override func numberOfSectionsInTableView(tableView: UITableView) -> Int {
-        // #warning Incomplete implementation, return the number of sections
-        return 0
+        
+        return 1
     }
 
     override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        // #warning Incomplete implementation, return the number of rows
-        return 0
+        return ItemController.sharedController.items.count
     }
 
-    /*
+    
     override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCellWithIdentifier("reuseIdentifier", forIndexPath: indexPath)
-
-        // Configure the cell...
-
+        if let cell = tableView.dequeueReusableCellWithIdentifier("listViewCell", forIndexPath: indexPath) as? ListTableViewCell {
+            
+            cell.delegate = self
+            cell.updateWithItem(ItemController.sharedController.items[indexPath.row])
+        
         return cell
+            
+        } else {
+            return UITableViewCell()
+        }
     }
-    */
-
-    /*
-    // Override to support conditional editing of the table view.
-    override func tableView(tableView: UITableView, canEditRowAtIndexPath indexPath: NSIndexPath) -> Bool {
-        // Return false if you do not want the specified item to be editable.
-        return true
-    }
-    */
-
-    /*
+    
     // Override to support editing the table view.
     override func tableView(tableView: UITableView, commitEditingStyle editingStyle: UITableViewCellEditingStyle, forRowAtIndexPath indexPath: NSIndexPath) {
         if editingStyle == .Delete {
-            // Delete the row from the data source
+            let item = ItemController.sharedController.items[indexPath.row]
+            ItemController.sharedController.removeItem(item)
             tableView.deleteRowsAtIndexPaths([indexPath], withRowAnimation: .Fade)
-        } else if editingStyle == .Insert {
-            // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
+            ItemController.sharedController.saveToPersistentStorage()
         }    
     }
-    */
-
-    /*
-    // Override to support rearranging the table view.
-    override func tableView(tableView: UITableView, moveRowAtIndexPath fromIndexPath: NSIndexPath, toIndexPath: NSIndexPath) {
-
-    }
-    */
-
-    /*
-    // Override to support conditional rearranging of the table view.
-    override func tableView(tableView: UITableView, canMoveRowAtIndexPath indexPath: NSIndexPath) -> Bool {
-        // Return false if you do not want the item to be re-orderable.
-        return true
-    }
-    */
-
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
-        // Get the new view controller using segue.destinationViewController.
-        // Pass the selected object to the new view controller.
-    }
-    */
 
 }
