@@ -32,15 +32,6 @@ class ItemController {
         }
     }
     
- /*   func filePath(key: String) -> String {
-        let directorySearchResults = NSSearchPathForDirectoriesInDomains(NSSearchPathDirectory.DocumentDirectory, NSSearchPathDomainMask.AllDomainsMask, true)
-        let documentsPath: AnyObject = directorySearchResults[0]
-        let entriesPath = documentsPath.stringByAppendingString("/\(key).plist")
-        
-        return entriesPath
-    }
- */
-    
     func saveToPersistentStorage() {
         _ = try? Stack.sharedStack.managedObjectContext.save()
     }
