@@ -12,6 +12,10 @@ import CoreData
 
 class Item: NSManagedObject {
 
-// Insert code here to add functionality to your managed object subclass
+    convenience init(name: String, context: NSManagedObjectContext = Stack.sharedStack.managedObjectContext) {
+        guard let entity = NSEntityDescription.entityForName("Item", inManagedObjectContext: context) else { fatalError("item not found") }
+        self.init(entity: entity, insertIntoManagedObjectContext: context)
+        self.name = name
+    }
 
 }
